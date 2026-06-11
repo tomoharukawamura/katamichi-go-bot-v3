@@ -1,0 +1,36 @@
+{
+    "channels": [
+        {
+            "id": "C0B8T764A8K",
+            "section": ["2", "2"]
+        },
+        {
+            "id": "C0B8J4F37C7",
+            "section": ["3", "3"]
+        },
+        {
+            "id": "C0B8J44RUS3",
+            "section": ["2", "3"]
+        },
+        {
+            "id": "C0B91D2PW8Z",
+            "section": ["3", "静岡"]
+        },
+        {
+            "id": "C0B8T8J3N9H",
+            "section": ["3", "愛知"]
+        },
+        {
+            "id": "C0B936L3QQ4",
+            "section": ["3", "5"]
+        },
+        {
+            "id": "C0B9TSP2P5W",
+            "section": ["4", "5"]
+        },
+        {
+            "id": "C0B91DE8S6M",
+            "section": ["8", "8"]
+        }
+    ]
+}

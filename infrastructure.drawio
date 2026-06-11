@@ -1,0 +1,191 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="katamichi-go-bot インフラ構成" id="infra">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ========== AWS Region ========== -->
+        <mxCell id="aws" value="AWS ap-northeast-1" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=13;verticalAlign=top;arcSize=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1160" height="760" as="geometry" />
+        </mxCell>
+
+        <!-- ========== ECR ========== -->
+        <mxCell id="ecr" value="ECR&#xa;katamichi-go-bot" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ========== SSM Parameter Store ========== -->
+        <mxCell id="ssm" value="SSM Parameter Store" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="220" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ssm_sta" value="/katamichi/sta/slack-token" style="rounded=1;whiteSpace=wrap;fillColor=#f3e8fd;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="250" width="160" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ssm_pro" value="/katamichi/pro/slack-token" style="rounded=1;whiteSpace=wrap;fillColor=#f3e8fd;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="284" width="160" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== IAM ========== -->
+        <mxCell id="iam" value="IAM" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="370" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_exec" value="ecs-task-exec role&#xa;(ECR / CWLogs / SSM)" style="rounded=1;whiteSpace=wrap;fillColor=#f3e8fd;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="395" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_task" value="ecs-task role&#xa;(S3 state.json)" style="rounded=1;whiteSpace=wrap;fillColor=#f3e8fd;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="431" width="160" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== S3 ========== -->
+        <mxCell id="s3" value="S3&#xa;katamichi-go-bot-v3" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="520" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_pro" value="state.json (pro)" style="rounded=1;whiteSpace=wrap;fillColor=#ddeeff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="548" width="160" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_sta" value="sta/state.json (sta)" style="rounded=1;whiteSpace=wrap;fillColor=#ddeeff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="582" width="160" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== ECS Cluster ========== -->
+        <mxCell id="ecs_cluster" value="ECS Cluster: katamichi-bot (Fargate)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;verticalAlign=top;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="80" width="520" height="260" as="geometry" />
+        </mxCell>
+
+        <!-- ECS sta -->
+        <mxCell id="ecs_sta" value="Service: bot-sta&#xa;desired_count=1" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="340" y="130" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs_sta_task" value="Fargate Task&#xa;(katamichi-bot-sta)" style="rounded=1;whiteSpace=wrap;fillColor=#fff6e8;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="355" y="175" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs_sta_env" value="APP_ENV=sta&#xa;SLACK_BOT_TOKEN (SSM)" style="rounded=1;whiteSpace=wrap;fillColor=#fff6e8;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="355" y="221" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs_sta_log" value="→ /ecs/katamichi-bot/sta" style="whiteSpace=wrap;fontSize=10;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="355" y="265" width="190" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- ECS pro -->
+        <mxCell id="ecs_pro" value="Service: bot-pro&#xa;desired_count=0" style="rounded=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="590" y="130" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs_pro_task" value="Fargate Task&#xa;(katamichi-bot-pro)" style="rounded=1;whiteSpace=wrap;fillColor=#fff6e8;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="605" y="175" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs_pro_env" value="APP_ENV=pro&#xa;SLACK_BOT_TOKEN (SSM)" style="rounded=1;whiteSpace=wrap;fillColor=#fff6e8;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="605" y="221" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs_pro_log" value="→ /ecs/katamichi-bot/pro" style="whiteSpace=wrap;fontSize=10;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="605" y="265" width="190" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- ========== EC2 ========== -->
+        <mxCell id="ec2" value="EC2 t4g.micro (ARM64) – 代替構成" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;verticalAlign=top;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="320" y="390" width="520" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2_docker" value="Docker" style="rounded=1;whiteSpace=wrap;fillColor=#eaf7e9;strokeColor=#82b366;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="340" y="430" width="480" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2_sta" value="bot-sta コンテナ&#xa;APP_ENV=sta&#xa;.env.sta / vol: bot-data-sta" style="rounded=1;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#4caf50;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="355" y="460" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2_pro" value="bot-pro コンテナ&#xa;APP_ENV=pro&#xa;.env.pro / vol: bot-data-pro" style="rounded=1;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#4caf50;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="595" y="460" width="210" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ========== CloudWatch ========== -->
+        <mxCell id="cw" value="CloudWatch Logs" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="900" y="80" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cw_sta" value="/ecs/katamichi-bot/sta" style="rounded=1;whiteSpace=wrap;fillColor=#eaf7e9;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="110" width="220" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="cw_pro" value="/ecs/katamichi-bot/pro" style="rounded=1;whiteSpace=wrap;fillColor=#eaf7e9;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="144" width="220" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Security Group ========== -->
+        <mxCell id="sg" value="Security Group: katamichi-bot-ecs&#xa;egress: 0.0.0.0/0 (all)" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="900" y="230" width="240" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ========== GitHub Actions ========== -->
+        <mxCell id="gha" value="GitHub Actions&#xa;deploy.yml" style="rounded=1;whiteSpace=wrap;fillColor=#f0f0f0;strokeColor=#555555;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="900" y="340" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ========== External Services ========== -->
+        <mxCell id="toyota" value="toyota.jp&#xa;（スクレイピング対象）" style="ellipse;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="660" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="slack" value="Slack&#xa;Incoming Webhook" style="ellipse;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="660" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Edges ========== -->
+
+        <!-- ECR → ECS tasks (image pull) -->
+        <mxCell id="e1" value="pull image" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#6c8ebf;" edge="1" source="ecr" target="ecs_cluster" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ECR → EC2 (image pull) -->
+        <mxCell id="e2" value="pull image" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#82b366;" edge="1" source="ecr" target="ec2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- SSM → ECS exec role (secrets) -->
+        <mxCell id="e3" value="GetParameters" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#9673a6;" edge="1" source="ssm" target="ecs_cluster" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ECS/EC2 → S3 (state read/write) -->
+        <mxCell id="e4" value="GetObject / PutObject" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;" edge="1" source="ecs_cluster" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="GetObject / PutObject" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;" edge="1" source="ec2" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ECS → CloudWatch (logs) -->
+        <mxCell id="e6" value="logs" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#82b366;" edge="1" source="ecs_cluster" target="cw" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ECS/EC2 → toyota.jp -->
+        <mxCell id="e7" value="HTTP scrape&#xa;10秒ごと" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;" edge="1" source="ecs_cluster" target="toyota" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;dashed=1;" edge="1" source="ec2" target="toyota" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ECS/EC2 → Slack -->
+        <mxCell id="e9" value="Webhook通知" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;" edge="1" source="ecs_cluster" target="slack" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;dashed=1;" edge="1" source="ec2" target="slack" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- GitHub Actions → ECR (push) -->
+        <mxCell id="e11" value="docker push" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="gha" target="ecr" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- GitHub Actions → EC2 (SSH deploy) -->
+        <mxCell id="e12" value="SSH / docker compose up" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="gha" target="ec2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Security Group → ECS -->
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#b85450;" edge="1" source="sg" target="ecs_cluster" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

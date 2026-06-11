@@ -1,0 +1,18 @@
+services:
+  bot-sta:
+    image: ${BOT_IMAGE:-katamichi-go-bot:latest}
+    restart: unless-stopped
+    env_file: .env.sta
+    volumes:
+      - bot-data-sta:/data
+
+  bot-pro:
+    image: ${BOT_IMAGE:-katamichi-go-bot:latest}
+    restart: unless-stopped
+    env_file: .env.pro
+    volumes:
+      - bot-data-pro:/data
+
+volumes:
+  bot-data-sta:
+  bot-data-pro:

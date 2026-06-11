@@ -1,0 +1,84 @@
+{
+    "decorations": [
+        {
+            "type": "default",
+            "icon": "🚗",
+            "color": "#36a64f"
+        },
+        {
+            "type": "suv_mnormal",
+            "icon": "🚙",
+            "color": "#36a64f"
+        },
+        {
+            "type": "suv_rare",
+            "icon": "🚙",
+            "color": "#00bfff"
+        },
+        {
+            "type": "sedan_normal",
+            "icon": "🚔",
+            "color": "#36a64f"
+        },
+        {
+            "type": "sedan_rare",
+            "icon": "🚔",
+            "color": "#a6a6a6"
+        },
+        {
+            "type": "sports",
+            "icon": "🏎️",
+            "color": "#ff0000"
+        },
+        {
+            "type": "prius_plugin",
+            "icon": "🔌",
+            "color": "#a6a6a6"
+        },
+        {
+            "type": "prius_normal",
+            "icon": "🚀",
+            "color": "#36a64f"
+        },
+        {
+            "type": "prius_van",
+            "icon": "🚀",
+            "color": "#f58220"
+        },
+        {
+            "type": "minivan_normal",
+            "icon": "🚌",
+            "color": "#36a64f"
+        },
+        {
+            "type": "minivan_rare",
+            "icon": "🚌",
+            "color": "#f58220"
+        },
+        {
+            "type": "minivan_luxury",
+            "icon": "🧑‍💼",
+            "color": "#b8860b"
+        },
+        {
+            "type": "crown",
+            "icon": "👑",
+            "color": "#ffd700"
+        },
+        {
+            "type": "randcruiser",
+            "icon": "⛰️",
+            "color": "#808000"
+        },
+        {
+            "type": "van_normal",
+            "icon": "🚐",
+            "color": "#36a64f"
+        },
+        {
+            "type": "light",
+            "icon": "🚗",
+            "color": "#f067a6"
+        }
+    ]
+}

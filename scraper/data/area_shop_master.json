@@ -1,0 +1,152 @@
+{
+    "areas": [
+        {
+            "name": "トヨタレンタリース青森",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/aomori.html",
+            "city_name": "青森",
+            "icon": "🍎"
+        },
+        {
+            "name": "トヨタレンタリース岩手",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/iwate.html",
+            "city_name": "岩手",
+            "icon": "🍇"
+        },
+        {
+            "name": "トヨタレンタリース宮城",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/miyagi.html",
+            "city_name": "宮城",
+            "icon": "🫛"
+        },
+        {
+            "name": "トヨタレンタリース仙台",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/sendai.html",
+            "city_name": "宮城",
+            "icon": "🫛"
+        },
+        {
+            "name": "トヨタレンタリース山形",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/yamagata.html",
+            "city_name": "山形",
+            "icon": "🍒"
+        },
+        {
+            "name": "トヨタレンタリース新福島",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/shinfukushima.html",
+            "city_name": "福島",
+            "icon": "🍑"
+        },
+        {
+            "name": "トヨタレンタリース福島",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/fukushima.html",
+            "city_name": "福島",
+            "icon": "🍑"
+        },
+        {
+            "name": "トヨタレンタリース神奈川",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/kanagawa.html",
+            "city_name": "神奈川",
+            "icon": "🚢"
+        },
+        {
+            "name": "トヨタレンタリース静岡",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/shizuoka.html",
+            "city_name": "静岡",
+            "icon": "🍵"
+        },
+        {
+            "name": "トヨタレンタリース愛知",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/aichi.html",
+            "city_name": "愛知",
+            "icon": " 🏭"
+        },
+        {
+            "name": "トヨタレンタリース名古屋",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/nagoya.html",
+            "city_name": "愛知",
+            "icon": "🏭"
+        },
+        {
+            "name": "トヨタレンタリース京都",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/kyoto.html",
+            "city_name": "京都",
+            "icon": "⛩️"
+        },
+        {
+            "name": "トヨタレンタリース大阪",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/osaka.html",
+            "city_name": "大阪",
+            "icon": "🏯"
+        },
+        {
+            "name": "トヨタレンタリース新大阪",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/shinosaka.html",
+            "city_name": "大阪",
+            "icon": "🏯"
+        },
+        {
+            "name": "トヨタモビリティサービス",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/tms.html",
+            "city_name": "東京",
+            "shop_city_exception": {
+                "成田空港店": "成田",
+                "東久留米駅前店": "東京(多摩)",
+                "調布店": "東京(多摩)"
+            },
+            "icon": "🗼",
+            "icon_exception": {
+                "成田空港店": "✈️",
+                "東久留米駅前店": "🐎",
+                "調布店": "🐎"
+            }
+        },
+        {
+            "name": "トヨタS＆Dレンタシェア西東京",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/tama.html",
+            "city_name": "東京(多摩)",
+            "icon": "🐎"
+        },
+        {
+            "name": "トヨタレンタリース福岡",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/fukuoka.html",
+            "city_name": "福岡",
+            "icon": "🍜"
+        },
+        {
+            "name": "トヨタレンタリース佐賀",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/saga.html",
+            "city_name": "佐賀",
+            "icon": "🍶"
+        },
+        {
+            "name": "トヨタレンタリース長崎",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/nagasaki.html",
+            "city_name": "長崎",
+            "icon": "⛪️"
+        },
+        {
+            "name": "トヨタレンタリース熊本",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/kumamoto.html",
+            "city_name": "熊本",
+            "icon": "🐻"
+        },
+        {
+            "name": "トヨタレンタリース宮崎",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/miyazaki.html",
+            "city_name": "宮崎",
+            "icon": "🌴"
+        },
+        {
+            "name": "トヨタレンタリース鹿児島",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/kagoshima.html",
+            "city_name": "鹿児島",
+            "icon": "🌋"
+        },
+        {
+            "name": "トヨタレンタリース大分",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/ooita.html",
+            "city_name": "大分",
+            "icon": "♨️"
+        }
+    ]
+}

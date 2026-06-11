@@ -1,0 +1,420 @@
+{
+  "cars": [
+    {
+      "canonical": "ヴィッツ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "アクア",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "アクアGR",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sports"
+      }
+    },
+    {
+      "canonical": "プリウス",
+      "aliases": [],
+      "prefix": ["新型"],
+      "meta": {
+        "type": "prius_normal"
+      }
+    },
+    {
+      "canonical": "プリウスPHV",
+      "aliases": ["プリウスPHEV"],
+      "prefix": [""],
+      "meta": {
+        "type": "prius_plugin"
+      }
+    },
+    {
+      "canonical": "プリウスα",
+      "aliases": ["プリウスアルファ"],
+      "prefix": [],
+      "meta": {
+        "type": "prius_van"
+      }
+    },
+    {
+      "canonical": "カローラ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sedan_normal"
+      }
+    },
+    {
+      "canonical": "カローラスポーツ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "ツーリング",
+      "aliases": [],
+      "prefix": ["カローラ"],
+      "meta": {
+        "type": "wagon_normal"
+      }
+    },
+    {
+      "canonical": "カローラクロス",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "suv_normal"
+      }
+    },
+    {
+      "canonical": "フィールダー",
+      "aliases": ["フィルダー"],
+      "prefix": ["カローラ"],
+      "meta": {
+        "type": "wagon_normal"
+      }
+    },
+    {
+      "canonical": "アクシオ",
+      "aliases": [],
+      "prefix": ["カローラ"],
+      "meta": {
+        "type": "sedan_normal"
+      }
+    },
+    {
+      "canonical": "86",
+      "aliases": [],
+      "prefix": ["GR"],
+      "meta": {
+        "type": "sports"
+      }
+    },
+    {
+      "canonical": "C-HR",
+      "aliases": ["CHR"],
+      "prefix": [],
+      "meta": {
+        "type": "suv_normal"
+      }
+    },
+    {
+      "canonical": "ヤリス",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "ヤリスクロス",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "suv_normal"
+      }
+    },
+    {
+      "canonical": "GRヤリス",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sports"
+      }
+    },
+    {
+      "canonical": "ルーミー",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "タンク",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "ライズ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "suv_normal"
+      }
+    },
+    {
+      "canonical": "パッソ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "プレミオ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sedan_rare"
+      }
+    },
+    {
+      "canonical": "アリオン",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sedan_rare"
+      }
+    },
+    {
+      "canonical": "カムリ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sedan_rare"
+      }
+    },
+    {
+      "canonical": "マークX",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "sedan_rare"
+      }
+    },
+    {
+      "canonical": "クラウン",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "crown"
+      }
+    },
+    {
+      "canonical": "シエンタ",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "compact_normal"
+      }
+    },
+    {
+      "canonical": "エスクァイア",
+      "aliases": ["エクスワイア", "エスクワィア"],
+      "prefix": [],
+      "meta": {
+        "type": "minivan_rare"
+      }
+    },
+    {
+      "canonical": "ノア",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "minivan_normal"
+      }
+    },
+    {
+      "canonical": "ヴォクシー",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "minivan_rare"
+      }
+    },
+    {
+      "canonical": "アルファード",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "minivan_luxury"
+      }
+    },
+    {
+      "canonical": "ヴェルファイア",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "minivan_luxury"
+      }
+    },
+    {
+      "canonical": "ランドクルーザープラド",
+      "aliases": ["ランクルプラド", "プラド"],
+      "prefix": [],
+      "meta": {
+        "type": "randcruiser"
+      }
+    },
+    {
+      "canonical": "ランドクルーザー250",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "randcruiser"
+      }
+    },
+    {
+      "canonical": "ハリアー",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "suv_rare"
+      }
+    },
+    {
+      "canonical": "RAV4",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "suv_rare"
+      }
+    },
+    {
+      "canonical": "ハイエース",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "van_normal"
+      }
+    },
+    {
+      "canonical": "ハイエースグランドキャビン",
+      "aliases": ["グランドキャビン", "ハイエースGC"],
+      "prefix": [],
+      "meta": {
+        "type": "minivan_rare"
+      }
+    },
+    {
+        "canonical": "レジアスエース",
+        "aliases": [],
+        "prefix": [],
+        "meta": {
+            "type": "van_normal"
+        }
+    },
+    {
+      "canonical": "タウンエース",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "van_normal"
+      }
+    },
+    {
+        "canonical": "ライトエース",
+        "aliases": [],
+        "prefix": [],
+        "meta": {
+          "type": "van_normal"
+        }
+    },
+    {
+      "canonical": "プロボックス",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "van_normal"
+      }
+    },
+    {
+      "canonical": "サクシード",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "van_normal"
+      }
+    },
+    {
+      "canonical": "ピクシス",
+      "aliases": [],
+      "prefix": [],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "タント",
+      "aliases": [],
+      "prefix": ["ダイハツ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "ムーヴ",
+      "aliases": [],
+      "prefix": ["ダイハツ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "ムーヴキャンバス",
+      "aliases": [],
+      "prefix": ["ダイハツ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "タフト",
+      "aliases": [],
+      "prefix": ["ダイハツ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "ミライース",
+      "aliases": [],
+      "prefix": ["ダイハツ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "ハイゼット",
+      "aliases": [],
+      "prefix": ["ダイハツ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "スペーシア",
+      "aliases": [],
+      "prefix": ["スズキ"],
+      "meta": {
+        "type": "light"
+      }
+    },
+    {
+      "canonical": "ワゴンR",
+      "aliases": [],
+      "prefix": ["スズキ"],
+      "meta": {
+        "type": "light"
+      }
+    }
+  ]
+}

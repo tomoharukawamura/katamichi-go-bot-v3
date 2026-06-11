@@ -1,0 +1,10 @@
+.env
+*.pem
+
+# Terraform
+terraform/.terraform/
+terraform/**/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/bootstrap/*.tfstate
+terraform/bootstrap/*.tfstate.backup
