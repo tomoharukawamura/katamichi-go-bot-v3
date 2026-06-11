@@ -4,5 +4,5 @@ variable "aws_region" {
 
 variable "github_repository" {
   description = "GitHub リポジトリ (owner/repo)"
-  default     = "tomok/katamichi-go-bot-v3"
+  default     = "tomoharukawamura/katamichi-go-bot-v3"
 }
