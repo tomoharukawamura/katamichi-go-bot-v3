@@ -111,7 +111,7 @@ data "aws_ami" "ecs_al2023_arm" {
 
   filter {
     name   = "name"
-    values = ["ecs-managed-instances-standard-arm64-*"]
+    values = ["amzn2-ami-ecs-kernel-5.10-hvm-*-arm64-ebs"]
   }
 
   filter {
@@ -127,14 +127,15 @@ resource "aws_instance" "ecs" {
   vpc_security_group_ids = [aws_security_group.ecs_instance.id]
 
   # ECSクラスターへの登録
-  user_data = <<-EOF
+  user_data = base64encode(<<-EOF
     #!/bin/bash
     echo ECS_CLUSTER=katamichi-bot >> /etc/ecs/ecs.config
   EOF
+  )
 
   root_block_device {
     volume_type = "gp3"
-    volume_size = 8
+    volume_size = 30
   }
 
   tags = {
