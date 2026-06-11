@@ -49,11 +49,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_exec" {
 
 data "aws_iam_policy_document" "ecs_task_exec_ssm" {
   statement {
-    actions = ["ssm:GetParameters"]
-    resources = [
-      var.ssm_slack_token_sta,
-      var.ssm_slack_token_pro,
-    ]
+    actions   = ["ssm:GetParameters"]
+    resources = [var.ssm_slack_token]
   }
 }
 
@@ -114,7 +111,12 @@ data "aws_ami" "ecs_al2023_arm" {
 
   filter {
     name   = "name"
-    values = ["al2023-ami-ecs-hvm-*-arm64-ebs"]
+    values = ["ecs-managed-instances-standard-arm64-*"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["arm64"]
   }
 }
 
@@ -185,7 +187,7 @@ resource "aws_ecs_task_definition" "sta" {
     ]
     secrets = [{
       name      = "SLACK_BOT_TOKEN"
-      valueFrom = var.ssm_slack_token_sta
+      valueFrom = var.ssm_slack_token
     }]
     mountPoints = [{
       sourceVolume  = "data"
@@ -228,7 +230,7 @@ resource "aws_ecs_task_definition" "pro" {
     ]
     secrets = [{
       name      = "SLACK_BOT_TOKEN"
-      valueFrom = var.ssm_slack_token_pro
+      valueFrom = var.ssm_slack_token
     }]
     mountPoints = [{
       sourceVolume  = "data"
