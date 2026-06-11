@@ -5,6 +5,9 @@ on:
     branches:
       - sta
       - main
+    paths-ignore:
+      - "terraform/**"
+      - ".github/**"
 
 env:
   AWS_REGION: ap-northeast-1
