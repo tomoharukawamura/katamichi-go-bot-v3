@@ -13,6 +13,7 @@ func makeItem(start, carType, period, condition, tel string) CarItem {
 		Period:    period,
 		Condition: condition,
 		Tel:       tel,
+		Available: true,
 	}
 }
 
@@ -68,14 +69,18 @@ func TestDetect_removed(t *testing.T) {
 
 func TestDetect_reopened(t *testing.T) {
 	key := itemA.Key()
+	soldOut := toStoredItem(itemA)
+	soldOut.Available = false
 	state := stateWith(
-		map[string]storage.StoredItem{},
+		map[string]storage.StoredItem{key: soldOut},
 		map[string]string{key: "ts-abc"},
 	)
-	d := Detect([]CarItem{itemA}, state)
+	available := itemA
+	available.Available = true
+	d := Detect([]CarItem{available}, state)
 
 	if len(d.Reopened) != 1 || d.Reopened[0].Key() != key {
-		t.Errorf("want 1 reopened, got %+v", d)
+		t.Errorf("want 1 reopened (Available false→true), got %+v", d)
 	}
 	if len(d.Added) != 0 {
 		t.Errorf("reopened item should not appear in Added")
@@ -108,17 +113,19 @@ func TestDetect_mixed(t *testing.T) {
 		map[string]storage.StoredItem{keyA: toStoredItem(itemA)},
 		map[string]string{keyA: "ts-a", keyB: "ts-b"},
 	)
+	availableB := itemB
+	availableB.Available = true
 	itemC := makeItem("札幌店", "アクア", "6月1日", "AT", "011-222-3333")
-	d := Detect([]CarItem{itemB, itemC}, state)
+	d := Detect([]CarItem{availableB, itemC}, state)
 
 	if len(d.Removed) != 1 || d.Removed[0] != keyA {
 		t.Errorf("Removed: want [%s], got %v", keyA, d.Removed)
 	}
-	if len(d.Reopened) != 1 || d.Reopened[0].Key() != keyB {
-		t.Errorf("Reopened: want [%s], got %v", keyB, d.Reopened)
+	if len(d.Reopened) != 0 {
+		t.Errorf("Reopened: want [], got %v", d.Reopened)
 	}
-	if len(d.Added) != 1 || d.Added[0].Key() != itemC.Key() {
-		t.Errorf("Added: want [%s], got %v", itemC.Key(), d.Added)
+	if len(d.Added) != 2 {
+		t.Errorf("Added: want [%s, %s], got %v", keyB, itemC.Key(), d.Added)
 	}
 }
 

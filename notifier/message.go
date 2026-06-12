@@ -30,9 +30,6 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 
 	addedResults := make([]tsResult, len(d.Added))
 	for i, item := range d.Added {
-		if !item.Available {
-			continue
-		}
 		wg.Add(1)
 		go func(i int, item scraper.CarItem) {
 			defer wg.Done()

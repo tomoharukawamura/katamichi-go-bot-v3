@@ -41,16 +41,16 @@ func Detect(items []CarItem, state *storage.State) Diff {
 
 	for key, item := range current {
 		stored, wasActive := state.Active[key]
-		_, wasSeen := state.MessageTS[key]
-
 		switch {
-		case !wasSeen:
+		case !wasActive && item.Available:
 			d.Added = append(d.Added, item)
 		case !wasActive:
+			// 未登録・受付終了 → 通知しない
+		case !stored.Available && item.Available:
 			d.Reopened = append(d.Reopened, item)
 		case stored.Available && !item.Available:
 			d.SoldOut = append(d.SoldOut, item)
-		case toStoredItem(item) != stored:
+		case stored.Available && item.Available && toStoredItem(item) != stored:
 			d.Updated = append(d.Updated, item)
 		}
 	}
