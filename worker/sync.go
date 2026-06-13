@@ -31,6 +31,9 @@ func SyncStorage(statePath string) error {
 		return fmt.Errorf("storage load: %w", err)
 	}
 
+	prevActiveCount := len(state.Active)
+	prevTSCount := len(state.MessageTS)
+
 	// Active をサイトの現状で完全に再構築
 	newActive := make(map[string]storage.StoredItem, len(items))
 	for _, item := range items {
@@ -41,14 +44,26 @@ func SyncStorage(statePath string) error {
 			newActive[key] = scraper.StoredItemFrom(item)
 		}
 	}
-	state.Active = newActive
 
-	// 現在サイトにないキーを MessageTS から除去
+	// Active から消えるキーのうち MessageTS があるものを記録
 	currentKeys := make(map[string]bool, len(items))
 	for _, item := range items {
 		currentKeys[item.Key()] = true
 	}
+	for key, ts := range state.MessageTS {
+		if !currentKeys[key] {
+			log.Printf("sync: pruning MessageTS key=%s storedTS=%q", key, ts)
+		}
+	}
+
+	state.Active = newActive
 	storage.PruneMessageTS(state, currentKeys)
 
-	return storage.Save(statePath, state)
+	if err := storage.Save(statePath, state); err != nil {
+		return err
+	}
+
+	log.Printf("sync: fetched=%d active: %d→%d ts: %d→%d",
+		len(items), prevActiveCount, len(state.Active), prevTSCount, len(state.MessageTS))
+	return nil
 }

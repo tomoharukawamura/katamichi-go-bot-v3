@@ -28,6 +28,12 @@ func runCheck(slack slackNotifier, ch *notifier.ChannelConfig, statePath string,
 		return nil
 	}
 
+	// Removed の storedTS は ApplyDiff で消える前に記録
+	removedTS := make(map[string]string, len(d.Removed))
+	for _, key := range d.Removed {
+		removedTS[key] = state.MessageTS[key]
+	}
+
 	if err := slack.Notify(d, state, ch); err != nil {
 		log.Printf("slack notify error (continuing): %v", err)
 	}
@@ -37,5 +43,21 @@ func runCheck(slack slackNotifier, ch *notifier.ChannelConfig, statePath string,
 		current[item.Key()] = item
 	}
 	scraper.ApplyDiff(state, d, current)
-	return storage.Save(statePath, state)
+	if err := storage.Save(statePath, state); err != nil {
+		return err
+	}
+
+	log.Printf("diff: added=%d reopened=%d updated=%d soldout=%d removed=%d (fetched=%d active=%d ts=%d)",
+		len(d.Added), len(d.Reopened), len(d.Updated), len(d.SoldOut), len(d.Removed),
+		len(items), len(state.Active), len(state.MessageTS))
+	for _, item := range d.Added {
+		log.Printf("  [added]    %s", item.Key())
+	}
+	for _, item := range d.Reopened {
+		log.Printf("  [reopened] %s (storedTS=%q)", item.Key(), state.MessageTS[item.Key()])
+	}
+	for _, key := range d.Removed {
+		log.Printf("  [removed]  %s (storedTS=%q)", key, removedTS[key])
+	}
+	return nil
 }
