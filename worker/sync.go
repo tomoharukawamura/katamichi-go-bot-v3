@@ -21,7 +21,7 @@ func RunNightlySync(statePath string, jst *time.Location) {
 }
 
 func SyncStorage(statePath string) error {
-	items, err := scraper.Fetch()
+	items, _, err := scraper.Fetch()
 	if err != nil {
 		return fmt.Errorf("scraper: %w", err)
 	}

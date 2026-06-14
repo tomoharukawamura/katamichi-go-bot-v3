@@ -2,21 +2,40 @@ package scraper
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tomok/katamichi-go-bot-v3/storage"
 )
 
 // Scan fetches the current listings, loads state, and detects changes in one step.
 func Scan(statePath string) (Diff, *storage.State, []CarItem, error) {
-	items, err := Fetch()
+	items, rawHTML, err := Fetch()
 	if err != nil {
 		return Diff{}, nil, nil, fmt.Errorf("scraper: %w", err)
+	}
+	if err := validateFormat(items, rawHTML); err != nil {
+		return Diff{}, nil, nil, err
 	}
 	state, err := storage.Load(statePath)
 	if err != nil {
 		return Diff{}, nil, nil, fmt.Errorf("storage load: %w", err)
 	}
 	return Detect(items, state), state, items, nil
+}
+
+func validateFormat(items []CarItem, rawHTML string) error {
+	for _, item := range items {
+		if item.CarType == "" {
+			return fmt.Errorf("format error: CarType is empty\nrawHTML:\n%s", rawHTML)
+		}
+		if !strings.Contains(item.StartShop, "トヨタレンタリース") {
+			return fmt.Errorf("format error: StartShop=%q\nrawHTML:\n%s", item.StartShop, rawHTML)
+		}
+		if !strings.Contains(item.ReturnShop, "トヨタレンタリース") {
+			return fmt.Errorf("format error: ReturnShop=%q\nrawHTML:\n%s", item.ReturnShop, rawHTML)
+		}
+	}
+	return nil
 }
 
 type Diff struct {

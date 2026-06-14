@@ -29,7 +29,7 @@ func (c CarItem) ReturnCityIcon() string { return iconFromShop(c.ReturnShop) }
 func (c CarItem) ReturnShopURL() string { return returnShopURLFromShop(c.ReturnShop) }
 
 func (c CarItem) Key() string {
-	return fmt.Sprintf("%s|%s", c.StartShop, c.CarType)
+	return c.CarType
 }
 
 func (c CarItem) String() string {
@@ -41,23 +41,24 @@ func (c CarItem) String() string {
 		c.StartShop, c.ReturnShop, c.CarType, c.Period, c.Condition, c.Tel, status)
 }
 
-func Fetch() ([]CarItem, error) {
+func Fetch() ([]CarItem, string, error) {
 	resp, err := http.Get(targetURL)
 	if err != nil {
-		return nil, fmt.Errorf("fetch failed: %w", err)
+		return nil, "", fmt.Errorf("fetch failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status: %d", resp.StatusCode)
+		return nil, "", fmt.Errorf("unexpected status: %d", resp.StatusCode)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("parse failed: %w", err)
+		return nil, "", fmt.Errorf("parse failed: %w", err)
 	}
 
-	return parse(doc), nil
+	rawHTML, _ := doc.Find("#service-items-shop-type-start").Html()
+	return parse(doc), rawHTML, nil
 }
 
 func parse(doc *goquery.Document) []CarItem {
