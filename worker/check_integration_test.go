@@ -18,7 +18,7 @@ func TestCheck_integration(t *testing.T) {
 	}
 
 	// 1. スクレイピングで現在の全データを取得
-	items, _, err := scraper.Fetch()
+	items, err := scraper.Fetch()
 	if err != nil {
 		t.Fatalf("Fetch: %v", err)
 	}

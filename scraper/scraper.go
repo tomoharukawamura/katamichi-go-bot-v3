@@ -41,24 +41,22 @@ func (c CarItem) String() string {
 		c.StartShop, c.ReturnShop, c.CarType, c.Period, c.Condition, c.Tel, status)
 }
 
-func Fetch() ([]CarItem, string, error) {
+func Fetch() ([]CarItem, error) {
 	resp, err := http.Get(targetURL)
 	if err != nil {
-		return nil, "", fmt.Errorf("fetch failed: %w", err)
+		return nil, fmt.Errorf("fetch failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, "", fmt.Errorf("unexpected status: %d", resp.StatusCode)
+		return nil, fmt.Errorf("unexpected status: %d", resp.StatusCode)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return nil, "", fmt.Errorf("parse failed: %w", err)
+		return nil, fmt.Errorf("parse failed: %w", err)
 	}
-
-	rawHTML, _ := doc.Find("#service-items-shop-type-start").Html()
-	return parse(doc), rawHTML, nil
+	return parse(doc), nil
 }
 
 func parse(doc *goquery.Document) []CarItem {
