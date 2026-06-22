@@ -70,6 +70,19 @@ func parse(doc *goquery.Document) []CarItem {
 	}
 	attr := func(s *goquery.Selection, key string) string { v, _ := s.Attr(key); return v }
 
+	validation := func(i CarItem) bool {
+		// Add your validation logic here
+		parts := strings.Fields(i.StartShop)
+		if len(parts) == 0 {
+			return false
+		}
+		if _, ok := areaMap[parts[0]]; !ok {
+			fmt.Printf("Unknown company in StartShop: %s\n", i.StartShop)
+			return false
+		}
+		return true
+	}
+
 	var items []CarItem
 	doc.Find("#service-items-shop-type-start .service-item").Each(func(_ int, s *goquery.Selection) {
 		item := CarItem{
@@ -83,7 +96,7 @@ func parse(doc *goquery.Document) []CarItem {
 			Tel:        formatTel(clean(s.Find(".service-item__reserve-tel").First().Text())),
 			Available:  !s.Find(".service-item__body").HasClass("show-entry-end"),
 		}
-		if item.StartShop != "" {
+		if validation(item) {
 			items = append(items, item)
 		}
 	})
