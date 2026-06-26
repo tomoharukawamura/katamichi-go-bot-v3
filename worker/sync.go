@@ -21,7 +21,11 @@ func RunNightlySync(statePath string, jst *time.Location) {
 }
 
 func SyncStorage(statePath string) error {
-	items, err := scraper.Fetch()
+	return syncStorage(statePath, scraper.Fetch)
+}
+
+func syncStorage(statePath string, fetch func() ([]scraper.CarItem, error)) error {
+	items, err := fetch()
 	if err != nil {
 		return fmt.Errorf("scraper: %w", err)
 	}
@@ -34,6 +38,20 @@ func SyncStorage(statePath string) error {
 	prevActiveCount := len(state.Active)
 	prevTSCount := len(state.MessageTS)
 
+	currentKeys := make(map[string]bool, len(items))
+	for _, item := range items {
+		currentKeys[item.Key()] = true
+	}
+
+	// stateにあってサイトから消えたキーをまとめて削除
+	var removedCount int
+	for key := range state.Active {
+		if !currentKeys[key] {
+			log.Printf("sync: removing key=%s", key)
+			removedCount++
+		}
+	}
+
 	// Active をサイトの現状で完全に再構築
 	newActive := make(map[string]storage.StoredItem, len(items))
 	for _, item := range items {
@@ -45,17 +63,6 @@ func SyncStorage(statePath string) error {
 		}
 	}
 
-	// Active から消えるキーのうち MessageTS があるものを記録
-	currentKeys := make(map[string]bool, len(items))
-	for _, item := range items {
-		currentKeys[item.Key()] = true
-	}
-	for key, ts := range state.MessageTS {
-		if !currentKeys[key] {
-			log.Printf("sync: pruning MessageTS key=%s storedTS=%q", key, ts)
-		}
-	}
-
 	state.Active = newActive
 	storage.PruneMessageTS(state, currentKeys)
 
@@ -63,7 +70,7 @@ func SyncStorage(statePath string) error {
 		return err
 	}
 
-	log.Printf("sync: fetched=%d active: %d→%d ts: %d→%d",
-		len(items), prevActiveCount, len(state.Active), prevTSCount, len(state.MessageTS))
+	log.Printf("sync: fetched=%d removed=%d active: %d→%d ts: %d→%d",
+		len(items), removedCount, prevActiveCount, len(state.Active), prevTSCount, len(state.MessageTS))
 	return nil
 }

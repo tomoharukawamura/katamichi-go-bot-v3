@@ -36,7 +36,7 @@ func TestDetect_added(t *testing.T) {
 	if len(d.Added) != 1 || d.Added[0].Key() != itemA.Key() {
 		t.Errorf("want 1 added item, got %+v", d)
 	}
-	if len(d.Reopened)+len(d.Updated)+len(d.Removed) != 0 {
+	if len(d.Reopened)+len(d.Updated) != 0 {
 		t.Errorf("unexpected changes: %+v", d)
 	}
 }
@@ -54,18 +54,6 @@ func TestDetect_noChange(t *testing.T) {
 	}
 }
 
-func TestDetect_removed(t *testing.T) {
-	key := itemA.Key()
-	state := stateWith(
-		map[string]storage.StoredItem{key: toStoredItem(itemA)},
-		map[string]string{key: "ts-abc"},
-	)
-	d := Detect([]CarItem{}, state)
-
-	if len(d.Removed) != 1 || d.Removed[0] != key {
-		t.Errorf("want 1 removed, got %+v", d)
-	}
-}
 
 func TestDetect_reopened(t *testing.T) {
 	key := itemA.Key()
@@ -118,9 +106,6 @@ func TestDetect_mixed(t *testing.T) {
 	itemC := makeItem("札幌店", "アクア", "6月1日", "AT", "011-222-3333")
 	d := Detect([]CarItem{availableB, itemC}, state)
 
-	if len(d.Removed) != 1 || d.Removed[0] != keyA {
-		t.Errorf("Removed: want [%s], got %v", keyA, d.Removed)
-	}
 	if len(d.Reopened) != 0 {
 		t.Errorf("Reopened: want [], got %v", d.Reopened)
 	}
@@ -145,7 +130,7 @@ func TestDetect_periodChanged(t *testing.T) {
 	if d.Updated[0].Period != "6月1日" {
 		t.Errorf("Period = %q, want %q", d.Updated[0].Period, "6月1日")
 	}
-	if len(d.Added)+len(d.Removed)+len(d.Reopened) != 0 {
+	if len(d.Added)+len(d.Reopened) != 0 {
 		t.Errorf("unexpected changes: %+v", d)
 	}
 }

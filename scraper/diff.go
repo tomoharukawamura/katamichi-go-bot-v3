@@ -24,11 +24,10 @@ type Diff struct {
 	Reopened []CarItem
 	Updated  []CarItem
 	SoldOut  []CarItem // Available: true → false
-	Removed  []string  // CarItem.Key()
 }
 
 func (d Diff) HasChange() bool {
-	return len(d.Added)+len(d.Reopened)+len(d.Updated)+len(d.SoldOut)+len(d.Removed) > 0
+	return len(d.Added)+len(d.Reopened)+len(d.Updated)+len(d.SoldOut) > 0
 }
 
 func Detect(items []CarItem, state *storage.State) Diff {
@@ -55,12 +54,6 @@ func Detect(items []CarItem, state *storage.State) Diff {
 		}
 	}
 
-	for key := range state.Active {
-		if _, exists := current[key]; !exists {
-			d.Removed = append(d.Removed, key)
-		}
-	}
-
 	return d
 }
 
@@ -76,9 +69,6 @@ func ApplyDiff(state *storage.State, d Diff, current map[string]CarItem) {
 	}
 	for _, item := range d.SoldOut {
 		state.Active[item.Key()] = toStoredItem(item)
-	}
-	for _, key := range d.Removed {
-		delete(state.Active, key)
 	}
 }
 
