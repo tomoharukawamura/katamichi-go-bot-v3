@@ -1,1 +1,48 @@
-{}
+{
+    "channels": [
+        {
+            "id": "C08T45G3FC6",
+            "section": ["北東北", "南東北"]
+        },
+        {
+            "id": "C0BD85H3XGX",
+            "section": ["南東北", "南東北"]
+        },
+        {
+            "id": "C0BDPK8SY1G",
+            "section": ["北東北", "北東北"]
+        },
+        {
+            "id": "C0AME5PV25R",
+            "section": ["3", "3"]
+        },
+        {
+            "id": "C08T45F9F2A",
+            "section": ["2", "3"]
+        },
+        {
+            "id": "C0BDT8M319A",
+            "section": ["3", "静岡"]
+        },
+        {
+            "id": "C08TCCL0LHG",
+            "section": ["3", "愛知"]
+        },
+        {
+            "id": "C0BDT8N55A8",
+            "section": ["3", "甲信越"]
+        },
+        {
+            "id": "C08TZSBJMC0",
+            "section": ["3", "5"]
+        },
+        {
+            "id": "C08T45CM2EA",
+            "section": ["4", "5"]
+        },
+        {
+            "id": "C0AMQ51BDRA",
+            "section": ["8", "8"]
+        }
+    ]
+}
