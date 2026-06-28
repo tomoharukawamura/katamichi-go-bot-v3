@@ -153,12 +153,12 @@ resource "aws_ecs_cluster" "bot" {
 
 resource "aws_cloudwatch_log_group" "sta" {
   name              = "/ecs/katamichi-bot/sta"
-  retention_in_days = 30
+  retention_in_days = 3
 }
 
 resource "aws_cloudwatch_log_group" "pro" {
   name              = "/ecs/katamichi-bot/pro"
-  retention_in_days = 30
+  retention_in_days = 3
 }
 
 # ========== タスク定義 ==========
