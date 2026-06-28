@@ -1,7 +1,7 @@
 package worker
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/tomok/katamichi-go-bot-v3/notifier"
 	"github.com/tomok/katamichi-go-bot-v3/scraper"
@@ -29,7 +29,7 @@ func runCheck(slack slackNotifier, ch *notifier.ChannelConfig, statePath string,
 	}
 
 	if err := slack.Notify(d, state, ch); err != nil {
-		return fmt.Errorf("slack: %w", err)
+		log.Printf("slack notify error (continuing): %v", err)
 	}
 
 	current := make(map[string]scraper.CarItem, len(items))
@@ -37,5 +37,18 @@ func runCheck(slack slackNotifier, ch *notifier.ChannelConfig, statePath string,
 		current[item.Key()] = item
 	}
 	scraper.ApplyDiff(state, d, current)
-	return storage.Save(statePath, state)
+	if err := storage.Save(statePath, state); err != nil {
+		return err
+	}
+
+	log.Printf("diff: added=%d reopened=%d updated=%d soldout=%d (fetched=%d active=%d ts=%d)",
+		len(d.Added), len(d.Reopened), len(d.Updated), len(d.SoldOut),
+		len(items), len(state.Active), len(state.MessageTS))
+	for _, item := range d.Added {
+		log.Printf("  [added]    %s", item.Key())
+	}
+	for _, item := range d.Reopened {
+		log.Printf("  [reopened] %s (storedTS=%q)", item.Key(), state.MessageTS[item.Key()])
+	}
+	return nil
 }

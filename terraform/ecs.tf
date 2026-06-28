@@ -171,12 +171,6 @@ resource "aws_ecs_task_definition" "sta" {
   execution_role_arn       = aws_iam_role.ecs_task_exec.arn
   task_role_arn            = aws_iam_role.ecs_task.arn
 
-  # /data/sta をEC2ホストのEBSにバインドマウント → タスク再起動でも永続
-  volume {
-    name      = "data"
-    host_path = "/data/sta"
-  }
-
   container_definitions = jsonencode([{
     name   = "bot"
     image  = "${aws_ecr_repository.bot.repository_url}:latest"
@@ -189,11 +183,6 @@ resource "aws_ecs_task_definition" "sta" {
     secrets = [{
       name      = "SLACK_BOT_TOKEN"
       valueFrom = var.ssm_slack_token
-    }]
-    mountPoints = [{
-      sourceVolume  = "data"
-      containerPath = "/data"
-      readOnly      = false
     }]
     logConfiguration = {
       logDriver = "awslogs"

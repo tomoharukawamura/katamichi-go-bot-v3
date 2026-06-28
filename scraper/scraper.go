@@ -26,10 +26,12 @@ func (c CarItem) StartCity() string     { return startCityFromShop(c.StartShop) 
 func (c CarItem) ReturnCity() string    { return returnCityFromShop(c.ReturnShop) }
 func (c CarItem) StartCityIcon() string { return iconFromShop(c.StartShop) }
 func (c CarItem) ReturnCityIcon() string { return iconFromShop(c.ReturnShop) }
+func (c CarItem) StartCityGroup() string  { g, _ := GroupForCity(c.StartCity()); return g }
+func (c CarItem) ReturnCityGroup() string { g, _ := GroupForCity(c.ReturnCity()); return g }
 func (c CarItem) ReturnShopURL() string { return returnShopURLFromShop(c.ReturnShop) }
 
 func (c CarItem) Key() string {
-	return fmt.Sprintf("%s|%s", c.StartShop, c.CarType)
+	return c.CarType
 }
 
 func (c CarItem) String() string {
@@ -56,7 +58,6 @@ func Fetch() ([]CarItem, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse failed: %w", err)
 	}
-
 	return parse(doc), nil
 }
 
@@ -71,6 +72,19 @@ func parse(doc *goquery.Document) []CarItem {
 	}
 	attr := func(s *goquery.Selection, key string) string { v, _ := s.Attr(key); return v }
 
+	validation := func(i CarItem) bool {
+		// Add your validation logic here
+		parts := strings.Fields(i.StartShop)
+		if len(parts) == 0 {
+			return false
+		}
+		if _, ok := areaMap[parts[0]]; !ok {
+			fmt.Printf("Unknown company in StartShop: %s\n", i.StartShop)
+			return false
+		}
+		return true
+	}
+
 	var items []CarItem
 	doc.Find("#service-items-shop-type-start .service-item").Each(func(_ int, s *goquery.Selection) {
 		item := CarItem{
@@ -84,7 +98,7 @@ func parse(doc *goquery.Document) []CarItem {
 			Tel:        formatTel(clean(s.Find(".service-item__reserve-tel").First().Text())),
 			Available:  !s.Find(".service-item__body").HasClass("show-entry-end"),
 		}
-		if item.StartShop != "" {
+		if validation(item) {
 			items = append(items, item)
 		}
 	})

@@ -188,7 +188,7 @@ func TestClean(t *testing.T) {
 
 func TestCarItemKey(t *testing.T) {
 	it := CarItem{StartShop: "盛岡店", CarType: "ヤリス", Period: "5月22日"}
-	want := "盛岡店|ヤリス"
+	want := "ヤリス"
 	if got := it.Key(); got != want {
 		t.Errorf("Key() = %q, want %q", got, want)
 	}

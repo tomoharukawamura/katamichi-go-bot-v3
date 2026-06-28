@@ -17,7 +17,7 @@ func TestIdentify(t *testing.T) {
 		wantFound bool
 	}{
 		// prefix なし
-		{"アクア", "アクア", CarMeta{Type: "compact_normal"}, true},
+		{"アクア", "アクア", CarMeta{Type: "aqua"}, true},
 		// prefix あり: prefix+canonical（スペースなし）
 		{"GR86", "86", CarMeta{Type: "sports"}, true},
 		{"ダイハツタント", "タント", CarMeta{Type: "light"}, true},
@@ -30,18 +30,23 @@ func TestIdentify(t *testing.T) {
 		// prefix+canonical+プレート
 		{"ダイハツタント 品川300あ1234", "タント", CarMeta{Type: "light"}, true},
 		// 境界の記号トリム
-		{"アクア・", "アクア", CarMeta{Type: "compact_normal"}, true},
-		{"・アクア", "アクア", CarMeta{Type: "compact_normal"}, true},
-		{"　アクア　", "アクア", CarMeta{Type: "compact_normal"}, true},
-		{"アクア - 品川300あ1234", "アクア", CarMeta{Type: "compact_normal"}, true},
+		{"アクア・", "アクア", CarMeta{Type: "aqua"}, true},
+		{"・アクア", "アクア", CarMeta{Type: "aqua"}, true},
+		{"　アクア　", "アクア", CarMeta{Type: "aqua"}, true},
+		{"アクア - 品川300あ1234", "アクア", CarMeta{Type: "aqua"}, true},
 		{"プリウス", "プリウス", CarMeta{Type: "prius_normal"}, true},
 		{"プリウスPHEV", "プリウスPHV", CarMeta{Type: "prius_plugin"}, true},
 		{"プリウスアルファ", "プリウスα", CarMeta{Type: "prius_van"}, true},
-		{"アクア 品川 500 あ 1234", "アクア", CarMeta{Type: "compact_normal"}, true},
-		{"アクア さいたま 500 あ 1234", "アクア", CarMeta{Type: "compact_normal"}, true},
+		{"アクア 品川 500 あ 1234", "アクア", CarMeta{Type: "aqua"}, true},
+		{"アクア さいたま 500 あ 1234", "アクア", CarMeta{Type: "aqua"}, true},
 		{"プリウスＰＨＶ", "プリウスPHV", CarMeta{Type: "prius_plugin"}, true},
-		{"ｱｸｱ", "アクア", CarMeta{Type: "compact_normal"}, true},
-		{"アルファードHV 品川 300 あ 1234", "アルファード", CarMeta{Type: "minivan_luxury"}, true},
+		{"ｱｸｱ", "アクア", CarMeta{Type: "aqua"}, true},
+		// HV / HEV
+		{"アルファードHV 品川 300 あ 1234", "アルファード", CarMeta{Type: "minivan_luxury", HasHybridLabel: true}, true},
+		{"ヤリスHV", "ヤリス", CarMeta{Type: "compact_normal", HasHybridLabel: true}, true},
+		{"ノアHEV", "ノア", CarMeta{Type: "minivan_normal", HasHybridLabel: true}, true},
+		{"ヤリスhv", "ヤリス", CarMeta{Type: "compact_normal", HasHybridLabel: true}, true},
+		{"アクア", "アクア", CarMeta{Type: "aqua"}, true},
 		{"存在しない車種", "", CarMeta{}, false},
 		{"", "", CarMeta{}, false},
 	}

@@ -25,7 +25,8 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 		if cid := state.MessageChannel[item.Key()]; cid != "" {
 			return cid, true
 		}
-		return ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+		// チャンネルが見つからない場合は通知しない
+		return ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 	}
 
 	addedResults := make([]tsResult, len(d.Added))
@@ -33,7 +34,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 		wg.Add(1)
 		go func(i int, item scraper.CarItem) {
 			defer wg.Done()
-			cid, ok := ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+			cid, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 			if !ok {
 				return
 			}
@@ -48,7 +49,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	updatedResults := make([]tsResult, len(d.Updated))
 	for i, item := range d.Updated {
 		storedCID := state.MessageChannel[item.Key()]
-		currentCID, ok := ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+		currentCID, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 		if !ok {
 			continue
 		}
@@ -87,14 +88,22 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	reopenedReplyResults := make([]tsResult, len(d.Reopened))
 	reopenedReactionErrs := make([]error, len(d.Reopened))
 	channelChangedReopenedResults := make([]tsResult, len(d.Reopened))
+	reopenedNewResults := make([]tsResult, len(d.Reopened))
 	for i, item := range d.Reopened {
 		storedCID := state.MessageChannel[item.Key()]
-		currentCID, ok := ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+		currentCID, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea	)
 		if !ok {
 			continue
 		}
 		storedTS := state.MessageTS[item.Key()]
 		if storedTS == "" {
+			// storedTSが未登録の場合は新着として投稿
+			wg.Add(1)
+			go func(i int, item scraper.CarItem, currentCID string) {
+				defer wg.Done()
+				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment("新着", item)})
+				reopenedNewResults[i] = tsResult{item.Key(), ts, currentCID, err}
+			}(i, item, currentCID)
 			continue
 		}
 
@@ -174,6 +183,12 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 			state.MessageTS[r.key] = r.ts
 		}
 	}
+	for _, r := range reopenedNewResults {
+		if r.err == nil && r.ts != "" {
+			state.MessageTS[r.key] = r.ts
+			state.MessageChannel[r.key] = r.channelID
+		}
+	}
 
 	// channelChangedUpdatedReactionErrs / channelChangedReopenedReactionErrs は
 	// 旧チャンネルへの後始末リアクションなのでベストエフォート（エラー無視）
@@ -193,6 +208,9 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	}
 	allErrs = append(allErrs, reopenedReactionErrs...)
 	for _, r := range reopenedReplyResults {
+		allErrs = append(allErrs, r.err)
+	}
+	for _, r := range reopenedNewResults {
 		allErrs = append(allErrs, r.err)
 	}
 	allErrs = append(allErrs, soldOutErrs...)

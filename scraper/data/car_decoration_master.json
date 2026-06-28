@@ -3,12 +3,19 @@
         {
             "type": "default",
             "icon": "🚗",
+            "color": "#36a64f",
+            "eco": "🌏"
+        },
+        {
+            "type": "aqua",
+            "icon": "🌏",
             "color": "#36a64f"
         },
         {
-            "type": "suv_mnormal",
+            "type": "suv_normal",
             "icon": "🚙",
-            "color": "#36a64f"
+            "color": "#36a64f",
+            "eco": "🌏"
         },
         {
             "type": "suv_rare",
@@ -18,7 +25,8 @@
         {
             "type": "sedan_normal",
             "icon": "🚔",
-            "color": "#36a64f"
+            "color": "#36a64f",
+            "eco": "🌏"
         },
         {
             "type": "sedan_rare",

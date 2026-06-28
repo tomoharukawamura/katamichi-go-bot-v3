@@ -73,12 +73,13 @@ func (s *Slack) Send(channelID, text string, attachments []Attachment) (string, 
 
 func (s *Slack) Reply(channelID, threadTS, text string, attachments []Attachment) error {
 	payload, err := json.Marshal(map[string]any{
-		"channel":      channelID,
-		"text":         text,
-		"attachments":  attachments,
-		"thread_ts":    threadTS,
-		"unfurl_links": false,
-		"unfurl_media": false,
+		"channel":          channelID,
+		"text":             text,
+		"attachments":      attachments,
+		"thread_ts":        threadTS,
+		"reply_broadcast":  true,
+		"unfurl_links":     false,
+		"unfurl_media":     false,
 	})
 	if err != nil {
 		return err

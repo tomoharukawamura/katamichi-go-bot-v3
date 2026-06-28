@@ -2,7 +2,15 @@
     "channels": [
         {
             "id": "C0B8T764A8K",
-            "section": ["2", "2"]
+            "section": ["北東北", "南東北"]
+        },
+        {
+            "id": "C0BDP4M6K18",
+            "section": ["南東北", "南東北"]
+        },
+        {
+            "id": "C0BDR06GTK3",
+            "section": ["北東北", "北東北"]
         },
         {
             "id": "C0B8J4F37C7",
@@ -19,6 +27,10 @@
         {
             "id": "C0B8T8J3N9H",
             "section": ["3", "愛知"]
+        },
+        {
+            "id": "C0BDR0UM533",
+            "section": ["3", "甲信越"]
         },
         {
             "id": "C0B936L3QQ4",
