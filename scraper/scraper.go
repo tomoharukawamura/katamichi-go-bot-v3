@@ -26,6 +26,8 @@ func (c CarItem) StartCity() string     { return startCityFromShop(c.StartShop) 
 func (c CarItem) ReturnCity() string    { return returnCityFromShop(c.ReturnShop) }
 func (c CarItem) StartCityIcon() string { return iconFromShop(c.StartShop) }
 func (c CarItem) ReturnCityIcon() string { return iconFromShop(c.ReturnShop) }
+func (c CarItem) StartCityGroup() string  { g, _ := GroupForCity(c.StartCity()); return g }
+func (c CarItem) ReturnCityGroup() string { g, _ := GroupForCity(c.ReturnCity()); return g }
 func (c CarItem) ReturnShopURL() string { return returnShopURLFromShop(c.ReturnShop) }
 
 func (c CarItem) Key() string {

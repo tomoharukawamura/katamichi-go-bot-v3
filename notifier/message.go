@@ -25,7 +25,8 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 		if cid := state.MessageChannel[item.Key()]; cid != "" {
 			return cid, true
 		}
-		return ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+		// チャンネルが見つからない場合は通知しない
+		return ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 	}
 
 	addedResults := make([]tsResult, len(d.Added))
@@ -33,7 +34,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 		wg.Add(1)
 		go func(i int, item scraper.CarItem) {
 			defer wg.Done()
-			cid, ok := ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+			cid, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 			if !ok {
 				return
 			}
@@ -48,7 +49,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	updatedResults := make([]tsResult, len(d.Updated))
 	for i, item := range d.Updated {
 		storedCID := state.MessageChannel[item.Key()]
-		currentCID, ok := ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+		currentCID, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 		if !ok {
 			continue
 		}
@@ -90,7 +91,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	reopenedNewResults := make([]tsResult, len(d.Reopened))
 	for i, item := range d.Reopened {
 		storedCID := state.MessageChannel[item.Key()]
-		currentCID, ok := ch.ChannelFor(item.StartArea, item.ReturnArea, item.StartCity(), item.ReturnCity())
+		currentCID, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea	)
 		if !ok {
 			continue
 		}

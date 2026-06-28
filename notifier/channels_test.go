@@ -7,10 +7,10 @@ import (
 func newTestChannelConfig() *ChannelConfig {
 	return &ChannelConfig{
 		index: map[[2]string]string{
-			{"2", "3"}:    "ch_2_3",
-			{"2", "2"}:    "ch_2_2",
-			{"岩手", "3"}: "ch_iwate_3", // sectionに都市名が混在するケース
-			{"盛岡", "3"}: "ch_morioka_3", // 都市名×エリアコード混在
+			{"2", "3"}:         "ch_2_3",
+			{"2", "2"}:         "ch_2_2",
+			{"北東北", "3"}:     "ch_kitaohoku_3",
+			{"北東北", "南東北"}: "ch_kitaohoku_minamitohoku",
 		},
 	}
 }
@@ -19,15 +19,15 @@ func TestChannelFor(t *testing.T) {
 	cfg := newTestChannelConfig()
 
 	cases := []struct {
-		desc       string
-		startArea  string
-		returnArea string
-		startCity  string
-		returnCity string
-		wantID     string
-		wantOK     bool
+		desc        string
+		startGroup  string
+		returnGroup string
+		startArea   string
+		returnArea  string
+		wantID      string
+		wantOK      bool
 	}{
-		// --- エリアコードのみで一致 ---
+		// --- エリアコードのみで一致（groupが空） ---
 		{
 			desc:       "エリアコード正順で一致",
 			startArea: "2", returnArea: "3",
@@ -38,36 +38,37 @@ func TestChannelFor(t *testing.T) {
 			startArea: "3", returnArea: "2",
 			wantID: "ch_2_3", wantOK: true,
 		},
-
-		// --- sectionに都市名が入っているケース ---
 		{
-			desc:       "sectionに都市名が入っているケース 正順",
-			startArea: "岩手", returnArea: "3",
-			wantID: "ch_iwate_3", wantOK: true,
-		},
-		{
-			desc:       "sectionに都市名が入っているケース 逆順",
-			startArea: "3", returnArea: "岩手",
-			wantID: "ch_iwate_3", wantOK: true,
+			desc:       "同一エリアコードで一致",
+			startArea: "2", returnArea: "2",
+			wantID: "ch_2_2", wantOK: true,
 		},
 
-		// --- startCityによる都市名優先マッチ ---
+		// --- グループ名が優先される ---
 		{
-			desc:       "startCityが都市名でsectionに都市名エントリが存在する場合優先される",
-			startArea: "2", returnArea: "3", // index["2","3"] も存在する
-			startCity: "岩手", returnCity: "",  // index["岩手","3"] を優先
-			wantID: "ch_iwate_3", wantOK: true,
+			desc:        "startGroupがエリアコードより優先してマッチ",
+			startGroup: "北東北", returnGroup: "",
+			startArea: "2", returnArea: "3", // index["2","3"]も存在するが index["北東北","3"]が優先
+			wantID: "ch_kitaohoku_3", wantOK: true,
 		},
 		{
-			desc:       "都市名×エリアコード混在のsectionにヒット",
-			startArea: "99", returnArea: "3",
-			startCity: "盛岡", returnCity: "",
-			wantID: "ch_morioka_3", wantOK: true,
-		},
-		{
-			desc:       "都市名がsectionに未登録でもエリアコードにフォールバック",
+			desc:        "両方グループ名でマッチ",
+			startGroup: "北東北", returnGroup: "南東北",
 			startArea: "2", returnArea: "3",
-			startCity: "不明市", returnCity: "不明市",
+			wantID: "ch_kitaohoku_minamitohoku", wantOK: true,
+		},
+		{
+			desc:        "グループ名逆順でもマッチ",
+			startGroup: "南東北", returnGroup: "北東北",
+			startArea: "3", returnArea: "2",
+			wantID: "ch_kitaohoku_minamitohoku", wantOK: true,
+		},
+
+		// --- グループ未登録でエリアコードにフォールバック ---
+		{
+			desc:        "グループ名がsectionに未登録でエリアコードにフォールバック",
+			startGroup: "甲信越", returnGroup: "",
+			startArea: "2", returnArea: "3",
 			wantID: "ch_2_3", wantOK: true,
 		},
 
@@ -75,23 +76,30 @@ func TestChannelFor(t *testing.T) {
 		{
 			desc:       "どのエントリにも一致しない",
 			startArea: "99", returnArea: "99",
-			startCity: "不明", returnCity: "不明",
 			wantID: "", wantOK: false,
 		},
 		{
-			desc:       "空文字は無視されてエリアコードで一致",
+			desc:        "グループ・エリアともに未登録",
+			startGroup: "未知", returnGroup: "未知",
+			startArea: "99", returnArea: "99",
+			wantID: "", wantOK: false,
+		},
+
+		// --- 空文字は無視 ---
+		{
+			desc:        "空のgroupは無視されてエリアコードで一致",
+			startGroup: "", returnGroup: "",
 			startArea: "2", returnArea: "2",
-			startCity: "", returnCity: "",
 			wantID: "ch_2_2", wantOK: true,
 		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.desc, func(t *testing.T) {
-			gotID, gotOK := cfg.ChannelFor(tc.startArea, tc.returnArea, tc.startCity, tc.returnCity)
+			gotID, gotOK := cfg.ChannelFor(tc.startGroup, tc.returnGroup, tc.startArea, tc.returnArea)
 			if gotOK != tc.wantOK || gotID != tc.wantID {
 				t.Errorf("ChannelFor(%q,%q,%q,%q) = (%q,%v), want (%q,%v)",
-					tc.startArea, tc.returnArea, tc.startCity, tc.returnCity,
+					tc.startGroup, tc.returnGroup, tc.startArea, tc.returnArea,
 					gotID, gotOK, tc.wantID, tc.wantOK)
 			}
 		})

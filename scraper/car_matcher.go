@@ -14,6 +14,8 @@ var defaultMasterJSON []byte
 // フルプレートパターン: 地名(漢字) + 分類番号 + ひらがな + 一連番号
 var fullPlateRe = regexp.MustCompile(`\s*[一-龥]{1,4}\s*\d{1,3}\s*[あ-ん]\s*\d{1,4}$`)
 
+var hybridRe = regexp.MustCompile(`(?i)\bH(EV|V)\b`)
+
 // 記号・空白など非文字・非数字を全て除去
 var symbolRe = regexp.MustCompile(`[^\p{L}\p{N}]+`)
 
@@ -78,7 +80,8 @@ func normalizeKana(s string) string {
 
 // CarMeta は master.json の meta フィールドに対応する
 type CarMeta struct {
-	Type string `json:"type"`
+	Type           string `json:"type"`
+	HasHybridLabel bool   `json:"-"`
 }
 
 type matchResult struct {
@@ -148,14 +151,18 @@ func newCarMatcherFromBytes(data []byte) (*CarMatcher, error) {
 func (m *CarMatcher) Identify(carType string) (canonical string, meta CarMeta, ok bool) {
 	var r matchResult
 
+	hasHVLabel := hybridRe.MatchString(normalizeKana(carType))
+
 	stripped := normalizeForLookup(strings.TrimSpace(fullPlateRe.ReplaceAllString(carType, "")))
 	if r, ok = m.aliasMap[stripped]; ok {
+		r.meta.HasHybridLabel = hasHVLabel
 		return r.canonical, r.meta, true
 	}
 
 	runes := []rune(normalizeKana(strings.TrimSpace(carType)))
 	for i := len(runes) - 1; i > 0; i-- {
 		if r, ok = m.aliasMap[normalizeForLookup(string(runes[:i]))]; ok {
+			r.meta.HasHybridLabel = hasHVLabel
 			return r.canonical, r.meta, true
 		}
 	}

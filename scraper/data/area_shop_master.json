@@ -55,6 +55,18 @@
             "icon": "🍵"
         },
         {
+            "name": "静岡トヨタ自動車",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/hamamatsu.html",
+            "city_name": "静岡",
+            "icon": "🍵"
+        },
+        {
+            "name": "トヨタレンタリース長野",
+            "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/nagano.html",
+            "city_name": "長野",
+            "icon": "⛰️"
+        },
+        {
             "name": "トヨタレンタリース愛知",
             "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/aichi.html",
             "city_name": "愛知",
@@ -88,17 +100,9 @@
             "name": "トヨタモビリティサービス",
             "return_shop_url": "https://cp.toyota.jp/rentacar/shoplist/tms.html",
             "city_name": "東京",
-            "shop_city_exception": {
-                "成田空港店": "成田",
-                "東久留米駅前店": "東京(多摩)",
-                "調布店": "東京(多摩)"
-            },
+            "shop_city_exception": { "成田空港店": "成田" },
             "icon": "🗼",
-            "icon_exception": {
-                "成田空港店": "✈️",
-                "東久留米駅前店": "🐎",
-                "調布店": "🐎"
-            }
+            "icon_exception": { "成田空港店": "✈️" }
         },
         {
             "name": "トヨタS＆Dレンタシェア西東京",

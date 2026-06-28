@@ -11,6 +11,7 @@ var carDecorationMasterJSON []byte
 type Decoration struct {
 	Icon  string
 	Color string
+	Eco   *string
 }
 
 var (
@@ -25,6 +26,7 @@ func init() {
 			Type  string `json:"type"`
 			Icon  string `json:"icon"`
 			Color string `json:"color"`
+			Eco   *string `json:"eco"`
 		} `json:"decorations"`
 	}
 	if err := json.Unmarshal(carDecorationMasterJSON, &master); err != nil {
@@ -32,7 +34,7 @@ func init() {
 	}
 	decorationMap = make(map[string]Decoration, len(master.Decorations))
 	for _, d := range master.Decorations {
-		dec := Decoration{Icon: d.Icon, Color: d.Color}
+		dec := Decoration{Icon: d.Icon, Color: d.Color, Eco: d.Eco}
 		decorationMap[d.Type] = dec
 		if d.Type == "default" {
 			defaultDecoration = dec
@@ -46,17 +48,29 @@ func init() {
 	}
 }
 
-func decorationFromCarType(carType string) Decoration {
+func decorationFromCarType(carType string) (Decoration, bool) {
 	_, meta, ok := carMatcher.Identify(carType)
 	if !ok {
-		return defaultDecoration
+		return defaultDecoration, false
 	}
 	if dec, ok := decorationMap[meta.Type]; ok {
-		return dec
+		return dec, meta.HasHybridLabel
 	}
-	return defaultDecoration
+	return defaultDecoration, meta.HasHybridLabel
 }
 
 func (c CarItem) Decoration() Decoration {
-	return decorationFromCarType(c.CarType)
+	decoration, hasHvLabel := decorationFromCarType(c.CarType)
+
+	if hasHvLabel && decoration.Eco != nil {
+		return Decoration{
+			Icon:  *decoration.Eco,
+			Color: decoration.Color,
+		}
+	}
+
+	return Decoration{
+		Icon:  decoration.Icon,
+		Color: decoration.Color,
+	}
 }

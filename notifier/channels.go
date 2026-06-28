@@ -51,11 +51,11 @@ func LoadChannelConfig() (*ChannelConfig, error) {
 	return &ChannelConfig{index: index}, nil
 }
 
-func (c *ChannelConfig) ChannelFor(startArea, returnArea, startCity, returnCity string) (string, bool) {
-	// (startCity|startArea) × (returnCity|returnArea) の全組み合わせを試す。
+func (c *ChannelConfig) ChannelFor(startGroup, returnGroup, startArea, returnArea string) (string, bool) {
+	// (startArea|startGroup) × (returnArea|returnGroup) の全組み合わせを試す。
 	// starts/returns の先頭が都市名なので、都市名を含む section エントリが先にマッチする。
-	starts := unique(startCity, startArea)
-	returns := unique(returnCity, returnArea)
+	starts := unique(startGroup, startArea)
+	returns := unique(returnGroup, returnArea)
 
 	for _, s := range starts {
 		for _, r := range returns {
