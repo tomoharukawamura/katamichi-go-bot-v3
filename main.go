@@ -34,22 +34,22 @@ func main() {
 	ctx := context.Background()
 	slack := notifier.NewSlack(token)
 
-	var s3b *storage.S3Backup
-	if os.Getenv("APP_ENV") == "pro" {
-		if b, err := worker.NewS3Backup(ctx); err != nil {
-			log.Printf("S3 backup disabled: %v", err)
-		} else {
-			s3b = b
-		}
-	}
+	// var s3b *storage.S3Backup
+	// if os.Getenv("APP_ENV") == "pro" {
+	// 	if b, err := worker.NewS3Backup(ctx); err != nil {
+	// 		log.Printf("S3 backup disabled: %v", err)
+	// 	} else {
+	// 		s3b = b
+	// 	}
+	// }
 
-	if s3b != nil {
-		if restored, err := s3b.Restore(ctx, statePath); err != nil {
-			log.Printf("S3 restore failed: %v", err)
-		} else if restored {
-			} else {
-		}
-	}
+	// if s3b != nil {
+	// 	if restored, err := s3b.Restore(ctx, statePath); err != nil {
+	// 		log.Printf("S3 restore failed: %v", err)
+	// 	} else if restored {
+	// 		} else {
+	// 	}
+	// }
 
 	if err := worker.SyncStorage(statePath); err != nil {
 		log.Printf("initial sync error: %v", err)
