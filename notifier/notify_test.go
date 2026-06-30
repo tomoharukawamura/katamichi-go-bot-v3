@@ -62,8 +62,8 @@ func TestItemAttachment_Color(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.desc, func(t *testing.T) {
-			item := scraper.CarItem{CarType: tc.carType}
-			att := itemAttachment("新着", item)
+			item := scraper.CarItemForMessage{CarItem: scraper.CarItem{CarType: tc.carType}}
+			att := itemAttachment(item, "新着")
 			if att.Color != tc.expectedColor {
 				t.Errorf("CarType=%q: want color %q, got %q", tc.carType, tc.expectedColor, att.Color)
 			}

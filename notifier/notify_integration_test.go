@@ -11,6 +11,16 @@ import (
 	"github.com/tomok/katamichi-go-bot-v3/storage"
 )
 
+func sp(s string) *string { return &s }
+
+func toMsg(status *string, items ...scraper.CarItem) []scraper.CarItemForMessage {
+	out := make([]scraper.CarItemForMessage, len(items))
+	for i, it := range items {
+		out[i] = scraper.NewCarItemForMessage(it, status)
+	}
+	return out
+}
+
 func TestNotify_integration(t *testing.T) {
 	token := os.Getenv("SLACK_BOT_TOKEN")
 	if token == "" {
@@ -47,7 +57,7 @@ func TestNotify_integration(t *testing.T) {
 
 	// --- Added ---
 	t.Run("Added", func(t *testing.T) {
-		d := scraper.Diff{Added: []scraper.CarItem{added}}
+		d := scraper.Diff{Added: toMsg(sp("新着"), added)}
 		if err := slack.Notify(d, state, ch); err != nil {
 			t.Errorf("Notify(Added) error: %v", err)
 		}
@@ -63,7 +73,7 @@ func TestNotify_integration(t *testing.T) {
 	t.Run("Updated", func(t *testing.T) {
 		updated := added
 		updated.Condition = "禁煙 AT ETC バックモニター"
-		d := scraper.Diff{Updated: []scraper.CarItem{updated}}
+		d := scraper.Diff{Updated: toMsg(sp("更新"), updated)}
 		if err := slack.Notify(d, state, ch); err != nil {
 			t.Errorf("Notify(Updated) error: %v", err)
 		}
@@ -75,7 +85,7 @@ func TestNotify_integration(t *testing.T) {
 	t.Run("SoldOut", func(t *testing.T) {
 		soldOut := added
 		soldOut.Available = false
-		d := scraper.Diff{SoldOut: []scraper.CarItem{soldOut}}
+		d := scraper.Diff{SoldOut: toMsg(nil, soldOut)}
 		if err := slack.Notify(d, state, ch); err != nil {
 			t.Errorf("Notify(SoldOut) error: %v", err)
 		}
@@ -87,7 +97,7 @@ func TestNotify_integration(t *testing.T) {
 	t.Run("Reopened", func(t *testing.T) {
 		reopened := added
 		reopened.Available = true
-		d := scraper.Diff{Reopened: []scraper.CarItem{reopened}}
+		d := scraper.Diff{Reopened: toMsg(sp("受付再開"), reopened)}
 		if err := slack.Notify(d, state, ch); err != nil {
 			t.Errorf("Notify(Reopened) error: %v", err)
 		}
@@ -109,7 +119,7 @@ func TestNotify_integration(t *testing.T) {
 	}
 
 	t.Run("Alphard_Added", func(t *testing.T) {
-		d := scraper.Diff{Added: []scraper.CarItem{alphardItem}}
+		d := scraper.Diff{Added: toMsg(sp("新着"), alphardItem)}
 		if err := slack.Notify(d, state, ch); err != nil {
 			t.Errorf("Notify(Alphard Added) error: %v", err)
 		}
@@ -238,7 +248,7 @@ func TestNotify_integration(t *testing.T) {
 				MessageTS:      map[string]string{},
 				MessageChannel: map[string]string{},
 			}
-			d := scraper.Diff{Added: []scraper.CarItem{tc.item}}
+			d := scraper.Diff{Added: toMsg(sp("新着"), tc.item)}
 			if err := slack.Notify(d, localState, ch); err != nil {
 				t.Errorf("Notify(%s Added) error: %v", tc.name, err)
 			}
@@ -257,7 +267,7 @@ func TestNotify_integration(t *testing.T) {
 	t.Run("ChannelChanged_Updated", func(t *testing.T) {
 		// 1. 誤ったエリア(area "2"→"2")でAddedとして通知
 		wrongAreaItem := baseItem("プリウス テスト用（チャンネル変化）")
-		addedDiff := scraper.Diff{Added: []scraper.CarItem{wrongAreaItem}}
+		addedDiff := scraper.Diff{Added: toMsg(sp("新着"), wrongAreaItem)}
 		if err := slack.Notify(addedDiff, state, ch); err != nil {
 			t.Fatalf("Notify(Added wrong area) error: %v", err)
 		}
@@ -275,7 +285,7 @@ func TestNotify_integration(t *testing.T) {
 			ReturnArea: "3",
 			ReturnShop: "トヨタモビリティサービス 返却可能店舗",
 		})
-		updatedDiff := scraper.Diff{Updated: []scraper.CarItem{correctAreaItem}}
+		updatedDiff := scraper.Diff{Updated: toMsg(sp("更新"), correctAreaItem)}
 		if err := slack.Notify(updatedDiff, state, ch); err != nil {
 			t.Errorf("Notify(Updated channel changed) error: %v", err)
 		}

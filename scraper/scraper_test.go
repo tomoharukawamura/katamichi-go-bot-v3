@@ -20,10 +20,10 @@ const sampleHTML = `
   <div class="service-item" data-start-area="2" data-return-area="3">
     <div class="service-item__body">
       <div class="service-item__shop-start">
-        <p>盛岡駅南口店<small>（補足）</small></p>
+        <p>トヨタレンタリース岩手 盛岡駅南口店<small>（補足）</small></p>
       </div>
       <div class="service-item__shop-return">
-        <p>青森空港店</p>
+        <p>トヨタレンタリース青森 青森空港店</p>
       </div>
       <div class="service-item__info__car-type">
         <p class="label-sp">車種</p>
@@ -51,9 +51,9 @@ func TestParse_basic(t *testing.T) {
 	it := items[0]
 
 	checks := []struct{ got, want string }{
-		{it.StartShop, "盛岡駅南口店"},
+		{it.StartShop, "トヨタレンタリース岩手 盛岡駅南口店"},
 		{it.StartArea, "2"},
-		{it.ReturnShop, "青森空港店"},
+		{it.ReturnShop, "トヨタレンタリース青森 青森空港店"},
 		{it.ReturnArea, "3"},
 		{it.CarType, "ヤリスHV 青森501わ3002"},
 		{it.Condition, "禁煙 AT"},
@@ -75,8 +75,8 @@ func TestParse_unavailable(t *testing.T) {
 	<div id="service-items-shop-type-start">
 	  <div class="service-item" data-start-area="1" data-return-area="2">
 	    <div class="service-item__body show-entry-end">
-	      <div class="service-item__shop-start"><p>盛岡店</p></div>
-	      <div class="service-item__shop-return"><p>青森店</p></div>
+	      <div class="service-item__shop-start"><p>トヨタレンタリース岩手 盛岡店</p></div>
+	      <div class="service-item__shop-return"><p>トヨタレンタリース青森 青森店</p></div>
 	      <div class="service-item__info__car-type"><p>ヤリス</p></div>
 	      <div class="service-item__info__condition"><p></p></div>
 	      <div class="service-item__date"><p>5月1日</p></div>
@@ -111,8 +111,8 @@ func TestParse_smallTagStripped(t *testing.T) {
 	<div id="service-items-shop-type-start">
 	  <div class="service-item" data-start-area="1" data-return-area="2">
 	    <div class="service-item__body">
-	      <div class="service-item__shop-start"><p>本店<small>（直営）</small></p></div>
-	      <div class="service-item__shop-return"><p>空港店</p></div>
+	      <div class="service-item__shop-start"><p>トヨタレンタリース岩手 本店<small>（直営）</small></p></div>
+	      <div class="service-item__shop-return"><p>トヨタレンタリース青森 空港店</p></div>
 	      <div class="service-item__info__car-type"><p>アクア</p></div>
 	      <div class="service-item__info__condition"><p></p></div>
 	      <div class="service-item__date"><p>期間未定</p></div>
@@ -124,7 +124,7 @@ func TestParse_smallTagStripped(t *testing.T) {
 	if len(items) != 1 {
 		t.Fatalf("want 1 item, got %d", len(items))
 	}
-	if items[0].StartShop != "本店" {
+	if items[0].StartShop != "トヨタレンタリース岩手 本店" {
 		t.Errorf("small tag not stripped: got %q", items[0].StartShop)
 	}
 }
@@ -134,8 +134,8 @@ func TestParse_labelSpIgnored(t *testing.T) {
 	<div id="service-items-shop-type-start">
 	  <div class="service-item" data-start-area="1" data-return-area="2">
 	    <div class="service-item__body">
-	      <div class="service-item__shop-start"><p>駅前店</p></div>
-	      <div class="service-item__shop-return"><p>港店</p></div>
+	      <div class="service-item__shop-start"><p>トヨタレンタリース岩手 駅前店</p></div>
+	      <div class="service-item__shop-return"><p>トヨタレンタリース青森 港店</p></div>
 	      <div class="service-item__info__car-type">
 	        <p class="label-sp">車種ラベル</p>
 	        <p>プリウス</p>

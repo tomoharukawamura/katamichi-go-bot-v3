@@ -21,7 +21,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	var wg sync.WaitGroup
 
 	// storedChannel は保存済みチャンネルIDを返す。未保存の場合は現在のエリア・都市名から解決する。
-	storedChannel := func(item scraper.CarItem) (string, bool) {
+	storedChannel := func(item scraper.CarItemForMessage) (string, bool) {
 		if cid := state.MessageChannel[item.Key()]; cid != "" {
 			return cid, true
 		}
@@ -32,13 +32,13 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	addedResults := make([]tsResult, len(d.Added))
 	for i, item := range d.Added {
 		wg.Add(1)
-		go func(i int, item scraper.CarItem) {
+		go func(i int, item scraper.CarItemForMessage) {
 			defer wg.Done()
 			cid, ok := ch.ChannelFor(item.StartCityGroup(), item.ReturnCityGroup(), item.StartArea, item.ReturnArea)
 			if !ok {
 				return
 			}
-			ts, err := s.Send(cid, buildHeaderText(item, "新着"), []Attachment{itemAttachment("新着", item)})
+			ts, err := s.Send(cid, buildHeaderText(item), []Attachment{itemAttachment(item)})
 			addedResults[i] = tsResult{item.Key(), ts, cid, err}
 		}(i, item)
 	}
@@ -65,9 +65,9 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 				defer wg.Done()
 				_ = s.Delete(storedCID, storedTS)
 			}(i, storedCID, storedTS)
-			go func(i int, item scraper.CarItem, currentCID string) {
+			go func(i int, item scraper.CarItemForMessage, currentCID string) {
 				defer wg.Done()
-				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment("新着", item)})
+				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment(item, "新着")})
 				channelChangedUpdatedResults[i] = tsResult{item.Key(), ts, currentCID, err}
 			}(i, item, currentCID)
 		} else {
@@ -77,9 +77,9 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 				cid = storedCID
 			}
 			wg.Add(1)
-			go func(i int, item scraper.CarItem, cid, storedTS string) {
+			go func(i int, item scraper.CarItemForMessage, cid, storedTS string) {
 				defer wg.Done()
-				newTS, err := s.replyOrSend(cid, storedTS, buildHeaderText(item, "更新"), []Attachment{itemAttachment("更新", item)})
+				newTS, err := s.replyOrSend(cid, storedTS, buildHeaderText(item), []Attachment{itemAttachment(item)})
 				updatedResults[i] = tsResult{item.Key(), newTS, cid, err}
 			}(i, item, cid, storedTS)
 		}
@@ -99,9 +99,9 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 		if storedTS == "" {
 			// storedTSが未登録の場合は新着として投稿
 			wg.Add(1)
-			go func(i int, item scraper.CarItem, currentCID string) {
+			go func(i int, item scraper.CarItemForMessage, currentCID string) {
 				defer wg.Done()
-				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment("新着", item)})
+				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment(item, "新着")})
 				reopenedNewResults[i] = tsResult{item.Key(), ts, currentCID, err}
 			}(i, item, currentCID)
 			continue
@@ -114,9 +114,9 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 				defer wg.Done()
 				_ = s.Delete(storedCID, storedTS)
 			}(i, storedCID, storedTS)
-			go func(i int, item scraper.CarItem, currentCID string) {
+			go func(i int, item scraper.CarItemForMessage, currentCID string) {
 				defer wg.Done()
-				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment("新着", item)})
+				ts, err := s.Send(currentCID, buildHeaderText(item, "新着"), []Attachment{itemAttachment(item, "新着")})
 				channelChangedReopenedResults[i] = tsResult{item.Key(), ts, currentCID, err}
 			}(i, item, currentCID)
 		} else {
@@ -130,9 +130,9 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 				defer wg.Done()
 				reopenedReactionErrs[i] = s.RemoveReaction(cid, storedTS, "sold_out")
 			}(i, cid, storedTS)
-			go func(i int, item scraper.CarItem, cid, storedTS string) {
+			go func(i int, item scraper.CarItemForMessage, cid, storedTS string) {
 				defer wg.Done()
-				newTS, err := s.replyOrSend(cid, storedTS, buildHeaderText(item, "受付再開"), []Attachment{itemAttachment("受付再開", item)})
+				newTS, err := s.replyOrSend(cid, storedTS, buildHeaderText(item), []Attachment{itemAttachment(item)})
 				reopenedReplyResults[i] = tsResult{item.Key(), newTS, cid, err}
 			}(i, item, cid, storedTS)
 		}
@@ -141,7 +141,7 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	soldOutErrs := make([]error, len(d.SoldOut))
 	for i, item := range d.SoldOut {
 		wg.Add(1)
-		go func(i int, item scraper.CarItem) {
+		go func(i int, item scraper.CarItemForMessage) {
 			defer wg.Done()
 			cid, ok := storedChannel(item)
 			if !ok {
@@ -217,12 +217,26 @@ func (s *Slack) Notify(d scraper.Diff, state *storage.State, ch *ChannelConfig) 
 	return errors.Join(allErrs...)
 }
 
-func buildHeaderText(item scraper.CarItem, status string) string {
+func buildHeaderText(item scraper.CarItemForMessage, override ...string) string {
 	icon := item.Decoration().Icon
+	status := ""
+	if s := item.Status(); s != nil {
+		status = *s
+	}
+	if len(override) > 0 {
+		status = override[0]
+	}
 	return fmt.Sprintf("%s%s%s", icon, status, icon)
 }
 
-func itemAttachment(label string, item scraper.CarItem) Attachment {
+func itemAttachment(item scraper.CarItemForMessage, override ...string) Attachment {
+	label := ""
+	if s := item.Status(); s != nil {
+		label = *s
+	}
+	if len(override) > 0 {
+		label = override[0]
+	}
 	dec := item.Decoration()
 	return Attachment{
 		Color:    dec.Color,
@@ -232,19 +246,23 @@ func itemAttachment(label string, item scraper.CarItem) Attachment {
 	}
 }
 
-func buildFields(item scraper.CarItem) []Field {
+func buildFields(item scraper.CarItemForMessage) []Field {
 	return []Field{
-		{Title: "区間", Value: fmt.Sprintf("%s %s → %s %s", item.StartCity(), item.StartCityIcon(), item.ReturnCity(), item.ReturnCityIcon())},
+		{Title: "区間", Value: sectionField(item)},
 		{Title: "車種", Value: item.CarType},
 		{Title: "出発店舗", Value: item.StartShop},
-		{Title: "返却店舗", Value: returnShopField(item)},
+		{Title: "返却エリア", Value: returnShopField(item)},
 		{Title: "期間", Value: item.Period},
 		{Title: "条件", Value: item.Condition},
 		{Title: "電話", Value: item.Tel},
 	}
 }
 
-func returnShopField(item scraper.CarItem) string {
+func sectionField(item scraper.CarItemForMessage) string  {
+	return fmt.Sprintf("%s %s → %s %s", item.StartCity(), item.StartCityIcon(), item.ReturnCity(), item.ReturnCityIcon())
+}
+
+func returnShopField(item scraper.CarItemForMessage) string {
 	url := item.ReturnShopURL()
 	if url == "" {
 		return item.ReturnShop

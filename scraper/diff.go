@@ -6,6 +6,8 @@ import (
 	"github.com/tomok/katamichi-go-bot-v3/storage"
 )
 
+func strPtr(s string) *string { return &s }
+
 // Scan fetches the current listings, loads state, and detects changes in one step.
 func Scan(statePath string) (Diff, *storage.State, []CarItem, error) {
 	items, err := Fetch()
@@ -19,11 +21,22 @@ func Scan(statePath string) (Diff, *storage.State, []CarItem, error) {
 	return Detect(items, state), state, items, nil
 }
 
+type CarItemForMessage struct {
+	CarItem
+	status *string
+}
+
+func (c CarItemForMessage) Status() *string { return c.status }
+
+func NewCarItemForMessage(item CarItem, status *string) CarItemForMessage {
+	return CarItemForMessage{CarItem: item, status: status}
+}
+
 type Diff struct {
-	Added    []CarItem
-	Reopened []CarItem
-	Updated  []CarItem
-	SoldOut  []CarItem // Available: true → false
+	Added    []CarItemForMessage
+	Reopened []CarItemForMessage
+	Updated  []CarItemForMessage
+	SoldOut  []CarItemForMessage // Available: true → false
 }
 
 func (d Diff) HasChange() bool {
@@ -42,15 +55,23 @@ func Detect(items []CarItem, state *storage.State) Diff {
 		stored, wasActive := state.Active[key]
 		switch {
 		case !wasActive && item.Available:
-			d.Added = append(d.Added, item)
+			d.Added = append(d.Added, CarItemForMessage{CarItem: item, status: strPtr("新着")})
 		case !wasActive:
 			// 未登録・受付終了 → 通知しない
 		case !stored.Available && item.Available:
-			d.Reopened = append(d.Reopened, item)
+			d.Reopened = append(d.Reopened, CarItemForMessage{CarItem: item, status: strPtr("受付再開")})
 		case stored.Available && !item.Available:
-			d.SoldOut = append(d.SoldOut, item)
-		case stored.Available && item.Available && toStoredItem(item) != stored:
-			d.Updated = append(d.Updated, item)
+			d.SoldOut = append(d.SoldOut, CarItemForMessage{CarItem: item})
+		case stored.Available && item.Available && item.StartShop != stored.StartShop:
+			d.Updated = append(d.Updated, CarItemForMessage{CarItem: item, status: strPtr("受付店舗変更")})
+		case stored.Available && item.Available && item.ReturnShop != stored.ReturnShop:
+			d.Updated = append(d.Updated, CarItemForMessage{CarItem: item, status: strPtr("返却店舗変更")})
+		case stored.Available && item.Available && item.Period != stored.Period:
+			d.Updated = append(d.Updated, CarItemForMessage{CarItem: item, status: strPtr("期間延長")})
+		case stored.Available && item.Available && item.Condition != stored.Condition:
+			d.Updated = append(d.Updated, CarItemForMessage{CarItem: item, status: strPtr("更新")})
+		case stored.Available && item.Available && item.Tel != stored.Tel:
+			d.Updated = append(d.Updated, CarItemForMessage{CarItem: item, status: strPtr("更新")})
 		}
 	}
 
@@ -59,16 +80,16 @@ func Detect(items []CarItem, state *storage.State) Diff {
 
 func ApplyDiff(state *storage.State, d Diff, current map[string]CarItem) {
 	for _, item := range d.Added {
-		state.Active[item.Key()] = toStoredItem(item)
+		state.Active[item.Key()] = toStoredItem(item.CarItem)
 	}
 	for _, item := range d.Reopened {
-		state.Active[item.Key()] = toStoredItem(item)
+		state.Active[item.Key()] = toStoredItem(item.CarItem)
 	}
 	for _, item := range d.Updated {
-		state.Active[item.Key()] = toStoredItem(item)
+		state.Active[item.Key()] = toStoredItem(item.CarItem)
 	}
 	for _, item := range d.SoldOut {
-		state.Active[item.Key()] = toStoredItem(item)
+		state.Active[item.Key()] = toStoredItem(item.CarItem)
 	}
 }
 
